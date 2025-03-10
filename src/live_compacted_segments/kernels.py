@@ -18,6 +18,12 @@ def binary_search(
     # Use a fixed number of iterations to avoid potential infinite loops
     max_iterations = 32  # Sufficient for arrays up to 2^32 elements
 
+    # if out of bounds, return the closest bound
+    if value < arr[low]:
+        return low
+    if value > arr[high]:
+        return high - 1
+
     for i in range(max_iterations):
         if low > high:
             break

@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from live_compacted_segments.timeseries_sampler import TimeSeriesSampler
 from live_compacted_segments.kernels import InterpolationMethod
+import torch
+import warp as wp
 
 def create_test_data():
     # Create test time series data
@@ -162,7 +164,10 @@ def test_integer_sampler_visualization():
     )
     
     # Sample data multiple times
-    output, metadata = sampler.sample()
+
+    ts, sg = sampler.sample_time_ranges()
+    # wp.to_torch(ts).add_(1000000)
+    output = sampler.sample_from_time_segments(ts, sg)
     output_cpu = output.cpu().numpy()
     
     # Extract time points for sampled data

@@ -175,6 +175,7 @@ class TimeSeriesSampler:
         else:
             raise RuntimeError(f"output_type {self.output_type} not supported")
         wp.record_event(self.finished_sampling)
+        return wp.to_torch(self.warp_arrays["output"])
 
     def sample(
         self,
