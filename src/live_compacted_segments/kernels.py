@@ -341,3 +341,23 @@ def interpolate_int_kernel(
     # Perform interpolation for non-clamped values
     for i in range(dim_values):
         output[batch_idx, sample_idx, value_idx, i] = values[idx, value_idx, i]
+
+
+@wp.kernel
+def calculate_sample_times_kernel(
+    time_segments: wp.array(dtype=wp.vec2f),
+    dt: float,
+    output_times: wp.array2d(dtype=wp.float32),
+):
+    """Kernel to calculate the time at each sample point."""
+    # Get thread indices for batch and sample
+    batch_idx, sample_idx = wp.tid()
+    
+    # Get the start time for this batch
+    t_start = time_segments[batch_idx][0]
+    
+    # Calculate the time for this sample
+    t = t_start + float(sample_idx) * dt
+    
+    # Store the time
+    output_times[batch_idx, sample_idx] = t

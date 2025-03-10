@@ -12,6 +12,7 @@ from live_compacted_segments.kernels import (
     interpolate_transforms_kernel,
     interpolate_int_kernel,
     InterpolationMethod,
+    calculate_sample_times_kernel,
 )
 
 
@@ -84,6 +85,18 @@ class TimeSeriesSampler:
         batch_size = self.batch_size
         num_samples = self.num_samples
         num_values = self.num_values
+
+        # Calculate sample times
+        wp.launch(
+            kernel=calculate_sample_times_kernel,
+            dim=(batch_size, num_samples),
+            inputs=[
+                time_segments,
+                self.dt,
+                self.warp_arrays["sample_times"],
+            ],
+        )
+
         wp.launch(
             kernel=find_indices_kernel,
             dim=batch_size,
@@ -295,11 +308,10 @@ class TimeSeriesSampler:
                 "values": values,
                 "boundaries": wp.array(self.boundaries, dtype=wp.int32),
                 # Output arrays
-                "signal_index": wp.zeros(batch_size, dtype=wp.int32),  # (B )
+                "signal_index": wp.zeros(batch_size, dtype=wp.int32),  # (B)
                 "time_segments": wp.zeros(batch_size, dtype=wp.vec2f),  # (B, 2)
                 "idx_bounds": wp.zeros((batch_size, 2), dtype=wp.int32),  # (B, 2)
-                "output_indices": wp.zeros(
-                    (batch_size, num_samples), dtype=wp.int32
-                ),  # (B, S)
+                "output_indices": wp.zeros((batch_size, num_samples), dtype=wp.int32),  # (B, S)
                 "output": output,
+                "sample_times": wp.zeros((batch_size, num_samples), dtype=wp.float32),  # (B, S)
             }

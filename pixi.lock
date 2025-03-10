@@ -454,8 +454,8 @@ packages:
   timestamp: 1727963148474
 - pypi: .
   name: live-compacted-segments
-  version: 0.1.0
-  sha256: 7095ff69fe51924dc5a21631b438bd33718af210cb99beb0d71adc18dac20335
+  version: 0.1.1
+  sha256: eb74692bbd957c4a15a4bad55dc01989ce3bcc9a5b0b7dfc33c6e901ffe04bea
   requires_dist:
   - torch
   - warp-lang
