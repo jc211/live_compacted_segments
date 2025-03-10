@@ -8,7 +8,7 @@ dependencies = [
   "nvtx",
   "scipy"
 ]
-name = "live_compacted_segments"
+name = "live-compacted-segments"
 requires-python = ">=3.11,<3.12"
 version = "0.1.0"
 
