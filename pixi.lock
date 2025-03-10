@@ -455,7 +455,7 @@ packages:
 - pypi: .
   name: live-compacted-segments
   version: 0.1.0
-  sha256: 94e0a618ee7231f062c1eac0b5bddf5cd2bd986f3ea87763633dc05901e22efc
+  sha256: 7095ff69fe51924dc5a21631b438bd33718af210cb99beb0d71adc18dac20335
   requires_dist:
   - torch
   - warp-lang

@@ -30,9 +30,15 @@ def test_composite_sampler():
     series_data = [generate_sample_data(100, num_values=1) for _ in range(num_series)]
 
     # Create samplers with different output types
-    float_sampler = TimeSeriesSamplerBuilder(output_type="float")
-    transform_sampler = TimeSeriesSamplerBuilder(output_type="transform")
-    int_sampler = TimeSeriesSamplerBuilder(output_type="int")
+    float_sampler = TimeSeriesSamplerBuilder(
+        batch_size, num_samples, dt, output_type="float"
+    )
+    transform_sampler = TimeSeriesSamplerBuilder(
+        batch_size, num_samples, dt, output_type="transform"
+    )
+    int_sampler = TimeSeriesSamplerBuilder(
+        batch_size, num_samples, dt, output_type="int"
+    )
 
     # Add the same series to each sampler
     for i, (timestamps, values) in enumerate(series_data):
@@ -57,15 +63,9 @@ def test_composite_sampler():
         int_sampler.add_series(timestamps, int_values, f"int_series_{i}")
 
     # Finalize the samplers
-    float_ts = float_sampler.finalize(
-        batch_size, num_samples, dt, InterpolationMethod.FIRST_ORDER_HOLD, device
-    )
-    transform_ts = transform_sampler.finalize(
-        batch_size, num_samples, dt, InterpolationMethod.FIRST_ORDER_HOLD, device
-    )
-    int_ts = int_sampler.finalize(
-        batch_size, num_samples, dt, InterpolationMethod.FIRST_ORDER_HOLD, device
-    )
+    float_ts = float_sampler.finalize()
+    transform_ts = transform_sampler.finalize()
+    int_ts = int_sampler.finalize()
 
     # Create the composite sampler
     samplers = {"float": float_ts, "transform": transform_ts, "int": int_ts}

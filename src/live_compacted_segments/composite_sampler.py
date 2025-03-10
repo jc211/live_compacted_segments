@@ -27,16 +27,23 @@ class CompositeSampler:
         self.samplers = samplers
         self.lead_sampler = lead_sampler
         self.streams = {name: wp.Stream(device=device) for name in samplers}
+        self.profile_active = False
 
     def sample(self) -> dict[str, torch.Tensor]:
-        with wp.ScopedTimer(f"Lead Sampler {self.lead_sampler_name}", use_nvtx=True):
-            time_segments = self.lead_sampler.sample_time_ranges()
+        with wp.ScopedTimer(
+            f"Lead Sampler {self.lead_sampler_name}",
+            use_nvtx=True,
+            active=self.profile_active,
+        ):
+            time_segments, signal_index = self.lead_sampler.sample_time_ranges()
         sampled_data = {}
         for name, sampler in self.samplers.items():
-            with wp.ScopedTimer(f"Sampler {name}", use_nvtx=True):
+            with wp.ScopedTimer(
+                f"Sampler {name}", use_nvtx=True, active=self.profile_active
+            ):
                 # with wp.ScopedStream(self.streams[name]):
                 # wp.wait_event(self.lead_sampler.time_sampled_event)
-                sampler.sample_from_time_segments(time_segments)
+                sampler.sample_from_time_segments(time_segments, signal_index)
                 sampled_data[name] = wp.to_torch(sampler.warp_arrays["output"])
 
         # for stream in self.streams.values():

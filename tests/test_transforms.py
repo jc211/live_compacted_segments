@@ -124,9 +124,9 @@ def plot_trajectories(timesteps, trajectories, interp_trajectories=None):
 if __name__ == "__main__":
     T = 40
     timesteps, trajectories = generate_trajectories(T)
-    builder = TimeSeriesSamplerBuilder(output_type="transform")
+    builder = TimeSeriesSamplerBuilder(4, 100, 0.01, output_type="transform")
     builder.add_series(timesteps, trajectories)
-    sampler = builder.finalize(4, 100, 0.01)
+    sampler = builder.finalize()
     traj_interp, _ = sampler.sample()
 
     plot_trajectories(timesteps, trajectories, traj_interp[0].cpu().numpy())

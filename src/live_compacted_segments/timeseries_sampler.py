@@ -74,9 +74,13 @@ class TimeSeriesSampler:
             ],
         )
         wp.record_event(self.time_sampled_event)
-        return self.warp_arrays["time_segments"]
+        time_segments = self.warp_arrays["time_segments"]
+        signal_index = self.warp_arrays["signal_index"]
+        return time_segments, signal_index
 
-    def sample_from_time_segments(self, time_segments: wp.array):
+    def sample_from_time_segments(
+        self, time_segments: wp.array, signal_index: wp.array
+    ):
         batch_size = self.batch_size
         num_samples = self.num_samples
         num_values = self.num_values
@@ -86,7 +90,7 @@ class TimeSeriesSampler:
             inputs=[
                 self.warp_arrays["times"],
                 self.warp_arrays["boundaries"],
-                self.warp_arrays["signal_index"],
+                signal_index,
                 time_segments,
                 self.warp_arrays["idx_bounds"],
             ],
@@ -100,7 +104,7 @@ class TimeSeriesSampler:
                 self.warp_arrays["times"],
                 self.dt,
                 self.warp_arrays["boundaries"],
-                self.warp_arrays["signal_index"],
+                signal_index,
                 time_segments,
                 self.warp_arrays["idx_bounds"],
                 self.warp_arrays["output_indices"],
@@ -118,7 +122,7 @@ class TimeSeriesSampler:
                     time_segments,
                     self.warp_arrays["output_indices"],
                     self.warp_arrays["boundaries"],
-                    self.warp_arrays["signal_index"],
+                    signal_index,
                     self.warp_arrays["output"],
                     self.interpolation_method,
                 ],
@@ -134,7 +138,7 @@ class TimeSeriesSampler:
                     time_segments,
                     self.warp_arrays["output_indices"],
                     self.warp_arrays["boundaries"],
-                    self.warp_arrays["signal_index"],
+                    signal_index,
                     self.warp_arrays["output"],
                     self.interpolation_method,
                 ],
@@ -150,7 +154,7 @@ class TimeSeriesSampler:
                     time_segments,
                     self.warp_arrays["output_indices"],
                     self.warp_arrays["boundaries"],
-                    self.warp_arrays["signal_index"],
+                    signal_index,
                     self.warp_arrays["output"],
                     self.interpolation_method,
                 ],
@@ -162,8 +166,8 @@ class TimeSeriesSampler:
     def sample(
         self,
     ) -> tuple[torch.Tensor, dict]:
-        time_segments = self.sample_time_ranges()
-        self.sample_from_time_segments(time_segments)
+        time_segments, signal_index = self.sample_time_ranges()
+        self.sample_from_time_segments(time_segments, signal_index)
 
         metadata = {
             "signal_index": wp.to_torch(self.warp_arrays["signal_index"]),

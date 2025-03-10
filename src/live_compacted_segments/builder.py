@@ -9,8 +9,21 @@ from live_compacted_segments.timeseries_sampler import (
 class TimeSeriesSamplerBuilder:
     """Builder for TimeSeriesSampler."""
 
-    def __init__(self, output_type: Literal["float", "transform", "int"] = "float"):
+    def __init__(
+        self,
+        batch_size: int,
+        num_samples: int,
+        dt: float,
+        interpolation_method=InterpolationMethod.FIRST_ORDER_HOLD,
+        device: str = "cuda",
+        output_type: Literal["float", "transform", "int"] = "float",
+    ):
         """Initialize the builder."""
+        self.batch_size = batch_size
+        self.num_samples = num_samples
+        self.dt = dt
+        self.interpolation_method = interpolation_method
+        self.device = device
         self.output_type: Literal["float", "transform", "int"] = output_type
         self.series_list = []
         self.series_names = []
@@ -59,11 +72,6 @@ class TimeSeriesSamplerBuilder:
 
     def finalize(
         self,
-        batch_size: int,
-        num_samples: int,
-        dt: float,
-        interpolation_method=InterpolationMethod.FIRST_ORDER_HOLD,
-        device: str = "cuda",
     ) -> TimeSeriesSampler:
         """
         Create a TimeSeriesSampler with the added series.
@@ -75,12 +83,12 @@ class TimeSeriesSamplerBuilder:
             raise ValueError("Cannot create a sampler with no time series")
 
         return TimeSeriesSampler(
-            batch_size,
-            num_samples,
-            dt,
-            interpolation_method,
+            self.batch_size,
+            self.num_samples,
+            self.dt,
+            self.interpolation_method,
             self.series_list,
             self.series_names,
             self.output_type,
-            device,
+            self.device,
         )

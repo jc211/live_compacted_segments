@@ -123,11 +123,11 @@ if __name__ == "__main__":
     num_samples = 100
     dt = 0.1
     sampler = (
-        TimeSeriesSamplerBuilder()
+        TimeSeriesSamplerBuilder(batch_size, num_samples, dt)
         .add_series(signals[0][0], signals[0][1], "Sine 1Hz")
         .add_series(signals[1][0], signals[1][1], "Sine 2Hz")
         .add_series(signals[2][0], signals[2][1], "Sine 0.5Hz")
-        .finalize(batch_size, num_samples, dt)
+        .finalize()
     )
 
     # Sample from the time series
